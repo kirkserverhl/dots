@@ -40,14 +40,18 @@ echo "Updating and reloading hyprpm plugins..."
 if command -v hyprpm >/dev/null 2>&1; then
     hyprpm update || true
 
-    # Enable common plugins the user relies on (safe if already enabled)
-    hyprpm enable hyprbars      || true
-    hyprpm enable hypridle      || true
-    hyprpm enable hyprfocus     || true
-    hyprpm enable hyprtrails    || true
-    hyprpm enable hyprwinwrap   || true
-    hyprpm enable hyprscrolling || true
-    hyprpm enable hymission     || true
+    # Enable the main plugins the user relies on.
+    # These must have been added at least once on your main machine with `hyprpm add`.
+    # Add/remove lines below as needed.
+    hyprpm enable hyprbars   || true
+    hyprpm enable hypridle   || true
+    hyprpm enable hymission  || true
+
+    # Uncomment the ones you also want automatically enabled on new machines:
+    # hyprpm enable hyprfocus     || true
+    # hyprpm enable hyprtrails    || true
+    # hyprpm enable hyprwinwrap   || true
+    # hyprpm enable hyprscrolling || true
 
     hyprpm reload || true
     echo "hyprpm plugins updated and reloaded (if any were installed)."

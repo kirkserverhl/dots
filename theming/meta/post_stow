@@ -27,10 +27,22 @@ if command -v matugen >/dev/null 2>&1; then
 
     if [[ -n "$DEFAULT_WALL" ]]; then
         echo "Running matugen with default wallpaper: $DEFAULT_WALL"
-        matugen image "$DEFAULT_WALL" || echo "Warning: matugen failed with default wallpaper"
+        if matugen image "$DEFAULT_WALL"; then
+            echo "Matugen finished with default wallpaper."
+
+            # Also set the wallpaper using waypaper so the desktop looks correct on first boot
+            if command -v waypaper >/dev/null 2>&1; then
+                echo "Setting wallpaper with waypaper..."
+                waypaper --wallpaper "$DEFAULT_WALL" || echo "Warning: waypaper failed to set the default wallpaper."
+            else
+                echo "waypaper not found — skipping wallpaper setting step."
+            fi
+        else
+            echo "Warning: matugen failed with default wallpaper"
+        fi
     else
-        echo "No default wallpaper found in $DEFAULT_WALLPAPER_DIR — skipping initial matugen run."
-        echo "Drop a wallpaper image there for automatic color generation on new machines."
+        echo "No default wallpaper found in $DEFAULT_WALLPAPER_DIR — skipping initial matugen + waypaper run."
+        echo "Drop a wallpaper image there for automatic color generation + wallpaper on new machines."
     fi
 else
     echo "matugen not found — skipping initial color generation."

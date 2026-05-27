@@ -133,7 +133,6 @@ YAY_PACKAGES=(
   # === Theming (critical for this dots setup) ===
   matugen-git
   python-pywalfox          # Used with matugen for Firefox theming
-  qt6ct-kde
   bibata-cursor-theme-bin
 
   # === Terminals ===

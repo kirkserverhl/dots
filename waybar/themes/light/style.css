@@ -1,0 +1,23 @@
+/* =====================================================
+ * Waybar - Light Theme (placeholder)
+ * =====================================================
+ *
+ * TODO: Build a proper static light theme here.
+ */
+
+@import "/home/kirk/.config/waybar/colors.css";   /* using live matugen for now */
+
+window#waybar {
+  background: transparent;
+}
+
+* {
+  font-family: "Agave Nerd Font Propo", "JetBrainsMono Nerd Font Propo", sans-serif;
+  font-size: 16px;
+  color: #222222;
+}
+
+#workspaces button.active {
+  background-color: #e0e0e0;
+  color: #111111;
+}

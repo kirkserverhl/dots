@@ -47,7 +47,7 @@ This directory keeps a **curated, auditable, minimal-but-complete** split:
 - After enabling Chaotic, move packages like `brave-bin`, `nwg-*`, `grimblast-git`, etc. from the YAY list into the PACMAN list.
 - The lists in `install.sh` are intentionally lean. Start there and only add back things you truly use daily.
 - `yay` is used for the AUR section because it's what the original post-install checklist used and it's very popular. You can change it to `paru` if you prefer (one line change).
-- Dolphin + its supporting KDE packages (Ark, thumbnailers, kio plugins, kdeconnect, xdg-desktop-portal-kde, etc.) are intentionally kept because Dolphin is still actively used as the file manager. The rest of Plasma (plasma-desktop, spectacle, etc.) remains excluded.
+- Dolphin is kept with a reduced set of KDE integration packages (we removed konsole, kdeconnect, kompare, and many heavy kio/thumbnailer plugins to minimize KDE bloat).
 
 ## Files
 

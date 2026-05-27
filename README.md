@@ -22,7 +22,7 @@ Or use the bootstrap tool for full package installation:
 
 ## Structure
 
-- `packages/` — Individual Stow packages (zsh, hyprland, foot, lf, etc.)
+- `packages/` — Individual Stow packages (zsh, hyprland, ghostty, lf, etc.)
 - `bootstrap/` — Tools to get required packages installed
 - `migrate.sh` — Safe way to transition existing configs with backups
 - `ensure.sh` — Quick "make sure required packages exist" entrypoint

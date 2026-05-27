@@ -1,4 +1,4 @@
-export requires=(foot theming)
+export requires=(theming)
 export pacman_deps=(
     firefox
     brightnessctl
@@ -14,16 +14,14 @@ export pacman_deps=(
     hyprsunset
     hyprpicker
     grim slurp
-    quickshell
     ttf-material-symbols-variable
     xdg-desktop-portal xdg-desktop-portal-hyprland xdg-desktop-portal-kde
     pipewire wireplumber pipewire-pulse
 
-    # Dolphin file manager + KDE integration / thumbnailers (still used)
-    dolphin ark audiocd-kio baloo dolphin-plugins kio-admin kompare konsole
-    ffmpegthumbs icoutils kdegraphics-thumbnailers kdesdk-thumbnailers
+    # Dolphin file manager + minimal KDE integration (kept because user still uses Dolphin)
+    dolphin ark baloo dolphin-plugins
+    ffmpegthumbs icoutils kdegraphics-thumbnailers
     kimageformats libappimage qt6-imageformats resvg taglib
-    kdeconnect
 )
 export aur_deps=(
     bibata-cursor-theme-bin

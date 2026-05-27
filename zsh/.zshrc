@@ -127,5 +127,13 @@ for f in "${XDG_CONFIG_HOME:-$HOME/.config}"/zsh/*.zsh(N); do
   source "$f"
 done
 
+# =====================================================
+# Matugen Terminal Colors (replaces old pywal)
+# =====================================================
+# Terminal colors are now managed by matugen.
+if command -v python3 >/dev/null 2>&1; then
+  python3 ~/.config/matugen/push_term_colors.py >/dev/null 2>&1 || true
+fi
+
 # Starship prompt
 eval "$(starship init zsh)"

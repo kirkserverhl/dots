@@ -7,8 +7,8 @@ It is mostly configuration and scripts (not a single app binary).
 
 - `dotctl/`: install/management tooling (`dotctl`) for stowing packages and installing dependencies.
 - `fonts/`: font assets (Nerd Fonts and related files) used by terminals/UI components.
-- `foot/`: minimal `foot` terminal config.
-- `hyprland/`: Hyprland WM config plus a substantial Quickshell codebase.
+
+- `hyprland/`: Hyprland WM config (Waybar + future AGS plans). Quickshell was previously used but has been removed.
 - `lf/`: `lf` file-manager config, custom previewer, trash/restore helpers.
 - `opencode/`: **global OpenCode configuration** — this is the actual config OpenCode reads at runtime, NOT a typical stowed dotfile package. See the dedicated `opencode/` section below for why this package is special.
 - `theming/`: Matugen-driven theming pipeline, scripts, templates, and Python utilities.
@@ -77,9 +77,9 @@ This repository uses a simple git workflow: direct commits to the `master` branc
 
 Run commands from repo root unless noted otherwise.
 
-### Primary Validation Surface (Quickshell)
+### Primary Validation Surface (Hyprland + Waybar)
 
-Working directory: `hyprland/.config/quickshell`
+Working directory: `hyprland/` (Waybar + future AGS plans)
 
 - Full check (architecture + lint + tests):
   - `scripts/check`
@@ -130,8 +130,8 @@ Working directory: `theming/tintterm`
 ## Testing Guidance
 
 - Prioritize testing changes where logic exists:
-  - Quickshell parsers/services/config merge logic.
   - Python logic in `materialized-web` and theming helpers.
+  - Any new Waybar or AGS logic (when added).
 - For config-only edits (e.g., static JSON/CSS/KDL), run nearest relevant lints or smoke checks.
 - Keep tests deterministic; avoid network dependence in unit tests.
 
@@ -161,17 +161,18 @@ Follow existing style in each subproject; do not force a single formatter across
 - Raise/return clear errors for API boundaries; avoid silent broad `except` unless intentionally best-effort (document why).
 - Keep constants uppercase (`BASE_COLORS`, `PAIRS`).
 
-### QML / Quickshell
+### QML / Quickshell (Deprecated)
 
-- Preserve architecture boundaries:
+Quickshell has been removed from the active config (user is on Waybar and plans to move to AGS).
+
+Old QML architecture notes kept below for reference only if old configs are restored from backup:
+
+- Preserve architecture boundaries (historical):
   - `app/` composition only.
   - `config/` runtime config, schema, palette, motion tokens.
   - `design/` reusable UI primitives/controls.
   - `features/` feature composition and view-model wiring.
   - `services/` IO, command execution, adapters, parsers.
-- Keep UI declarative; route IO and process interactions through services.
-- Prefer required properties on reusable components.
-- Keep theme values tokenized via config/palette, not hardcoded ad hoc.
 - Use `camelCase` for QML properties/functions, `PascalCase` for component files.
 - Add/update QML tests when parser/service behavior changes.
 
@@ -210,5 +211,5 @@ Follow existing style in each subproject; do not force a single formatter across
 1. Identify affected package(s) first.
 2. Read that package's `meta/manifest.sh` and local docs/AGENTS guidance.
 3. Make minimal, package-scoped edits.
-4. Run nearest validation commands (especially Quickshell `scripts/check` for shell UI changes).
+4. Run nearest validation commands (e.g. for Waybar or future AGS changes).
 5. Report commands run and results succinctly.

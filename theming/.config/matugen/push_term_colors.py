@@ -10,7 +10,7 @@ from pathlib import Path
 # 11 = background
 # 12 = cursor
 OSC = "\033]{};{}\007"
-DEFAULT_CONFIG = Path("~/.config/foot/colors.ini").expanduser()
+DEFAULT_CONFIG = Path("~/.config/ghostty/colors").expanduser()  # or foot/colors.ini if you still use it
 
 
 def send(fd, msg):
@@ -71,7 +71,7 @@ def push_to_ptys(theme):
 
 def main():
     if len(sys.argv) > 2:
-        print("Usage: push_term_colors.py [foot-colors.ini]", file=sys.stderr)
+        print("Usage: push_term_colors.py [terminal-colors-file]", file=sys.stderr)
         sys.exit(1)
 
     config_path = (

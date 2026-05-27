@@ -229,24 +229,24 @@ test_repeat_track_skips_nested_retrack() {
 
 test_repeat_add_merges_non_folded_directory() {
     setup_sandbox
-    mkdir -p "$DOTDIR/foot/meta" "$DOTDIR/foot/.config/foot"
-    printf 'export requires=()\n' >"$DOTDIR/foot/meta/manifest.sh"
-    printf 'layout\n' >"$DOTDIR/foot/.config/foot/config.kdl"
-    mkdir -p "$HOME/.config/foot"
-    stow --dir="$DOTDIR" --target="$HOME" --no-folding foot
+    mkdir -p "$DOTDIR/lf/meta" "$DOTDIR/lf/.config/lf"
+    printf 'export requires=()\n' >"$DOTDIR/lf/meta/manifest.sh"
+    printf 'layout\n' >"$DOTDIR/lf/.config/lf/config.kdl"
+    mkdir -p "$HOME/.config/lf"
+    stow --dir="$DOTDIR" --target="$HOME" --no-folding lf
 
-    mkdir -p "$HOME/.config/foot/scripts"
-    printf 'one\n' >"$HOME/.config/foot/scripts/rename-session.sh"
+    mkdir -p "$HOME/.config/lf/scripts"
+    printf 'one\n' >"$HOME/.config/lf/scripts/rename-session.sh"
 
-    output=$("$DOTCTL_SCRIPT" add foot "$HOME/.config/foot/scripts")
+    output=$("$DOTCTL_SCRIPT" add lf "$HOME/.config/lf/scripts")
 
-    printf 'two\n' >"$HOME/.config/foot/scripts/new.sh"
-    "$DOTCTL_SCRIPT" add foot "$HOME/.config/foot/scripts"
+    printf 'two\n' >"$HOME/.config/lf/scripts/new.sh"
+    "$DOTCTL_SCRIPT" add lf "$HOME/.config/lf/scripts"
 
-    assert_output_contains "$output" 'Stowing foot...'
-    assert_file_exists "$DOTDIR/foot/.config/foot/scripts/new.sh"
-    assert_is_symlink "$HOME/.config/foot/scripts/new.sh"
-    assert_not_exists "$DOTDIR/foot/.dots"
+    assert_output_contains "$output" 'Stowing lf...'
+    assert_file_exists "$DOTDIR/lf/.config/lf/scripts/new.sh"
+    assert_is_symlink "$HOME/.config/lf/scripts/new.sh"
+    assert_not_exists "$DOTDIR/lf/.dots"
 }
 
 test_install_resolves_dependencies_once() {

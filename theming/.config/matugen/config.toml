@@ -10,8 +10,11 @@ block_postfix = "*>"
 command = "set_wallpaper {{ image }}"
 set = true
 
-[templates.pywalfox]
-input_path = 'templates/pywalfox.json'
+# Firefox theming via pywalfox.
+# Matugen generates a wal-compatible colors file that pywalfox consumes.
+# This is the current way colors reach Firefox (not the old pywal tool).
+[templates.firefox]
+input_path = 'templates/firefox.json'
 output_path = '~/.cache/wal/colors.json'
 post_hook = 'pywalfox update; pywalfox {{mode | lower_case}}'
 
@@ -28,24 +31,19 @@ output_path = '~/.config/gtk-4.0/colors.css'
 input_path = 'templates/qt.colors'
 output_path = '~/.local/share/color-schemes/Matugen.colors'
 
-[templates.quickshell]
-input_path = "templates/quickshell.json"
-output_path = "~/.config/quickshell/config/palette.json"
-
 [templates.hyprland]
 input_path = "templates/hyprland.conf"
 output_path = "~/.config/hypr/colors.conf"
 post_hook = 'hyprctl setcursor "{{ mode | replace: "light", "Bibata-Modern-Ice" | replace: "dark", "Bibata-Modern-Classic" }}" 24'
 
+[templates.waybar]
+input_path = "templates/waybar.css"
+output_path = "~/.config/waybar/colors/matugen.css"
+
 [templates.ghostty]
 input_path = "templates/ghostty"
 output_path = "~/.config/ghostty/colors"
 post_hook = "kill -s USR2 $(pgrep ghostty)"
-
-[templates.foot]
-input_path = "templates/foot.ini"
-output_path = "~/.config/foot/colors.ini"
-post_hook = "python3 ~/.config/matugen/push_term_colors.py ~/.config/foot/colors.ini"
 
 [templates.materialized-web]
 input_path = "templates/materialized-web.json"

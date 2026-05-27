@@ -103,16 +103,15 @@ PACMAN_PACKAGES=(
   firefox
 
   # --- Optional but commonly wanted with this setup ---
-  # foot                    # fast terminal (alternative to ghostty)
-  # quickshell              # if you use the experimental quickshell shell
+  # (removed foot - now using ghostty + kitty as main terminals)
+  # (Quickshell removed — user uses Waybar, planning to move to AGS)
 
-  # --- Dolphin file manager + KDE integration ---
-  # You specifically want Dolphin (and its thumbnailers/integration) even though
-  # the rest of Plasma is not used. These packages make Dolphin work well under Hyprland.
-  dolphin ark audiocd-kio baloo dolphin-plugins kio-admin kompare konsole
-  ffmpegthumbs icoutils kdegraphics-thumbnailers kdesdk-thumbnailers
+  # --- Dolphin file manager + minimal KDE integration ---
+  # Stripped down to reduce KDE bloat while keeping Dolphin usable.
+  # (Removed konsole, kdeconnect, kompare, audiocd-kio, heavy kio plugins)
+  dolphin ark baloo dolphin-plugins
+  ffmpegthumbs icoutils kdegraphics-thumbnailers
   kimageformats libappimage qt6-imageformats resvg taglib
-  kdeconnect
 )
 
 # Packages that must be built or come only from the AUR (or you prefer the AUR version).
@@ -121,7 +120,7 @@ PACMAN_PACKAGES=(
 YAY_PACKAGES=(
   # === Theming (critical for this dots setup) ===
   matugen-git
-  python-pywalfox
+  python-pywalfox          # Used with matugen for Firefox theming
   qt6ct-kde
   bibata-cursor-theme-bin
 

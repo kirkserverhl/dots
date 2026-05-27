@@ -19,7 +19,7 @@ BACKUP_BASE="$HOME/backups/dots-migrate-$(date +%Y-%m-%d_%H%M%S)"
 DRY_RUN=false
 
 # Default packages to migrate if none specified
-DEFAULT_PACKAGES=(zsh foot lf theming hyprland fonts lazygit)
+DEFAULT_PACKAGES=(zsh lf theming hyprland waybar fonts lazygit)
 
 if [[ "${1:-}" == "--dry-run" ]]; then
     DRY_RUN=true
@@ -75,15 +75,15 @@ stow_package() {
         hyprland)
             backup_path "$HOME/.config/hypr"
             ;;
-        foot)
-            backup_path "$HOME/.config/foot"
-            ;;
         lf)
             backup_path "$HOME/.config/lf"
             ;;
         theming)
             backup_path "$HOME/.config/matugen"
             backup_path "$HOME/.local/share/color-schemes"
+            ;;
+        waybar)
+            backup_path "$HOME/.config/waybar"
             ;;
         fonts)
             backup_path "$HOME/.local/share/fonts"

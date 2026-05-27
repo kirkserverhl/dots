@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Install pywalfox extension (only needed once per user)
+# This allows matugen-generated colors to be applied to Firefox
 pywalfox install || true
 
 # Set KDE icon theme for Dolphin and other KDE6 apps

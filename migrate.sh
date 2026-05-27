@@ -19,7 +19,7 @@ BACKUP_BASE="$HOME/backups/dots-migrate-$(date +%Y-%m-%d_%H%M%S)"
 DRY_RUN=false
 
 # Default packages to migrate if none specified
-DEFAULT_PACKAGES=(zsh lf theming hyprland waybar fonts lazygit)
+DEFAULT_PACKAGES=(zsh lf theming hyprland waybar fonts lazygit oh-my-zsh wallpapers)
 
 if [[ "${1:-}" == "--dry-run" ]]; then
     DRY_RUN=true

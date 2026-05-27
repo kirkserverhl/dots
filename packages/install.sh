@@ -54,6 +54,8 @@ PACMAN_PACKAGES=(
   neovim
   lazygit
   starship
+  atuin
+  yazi
 
   # lf / file preview support
   chafa
@@ -91,6 +93,7 @@ PACMAN_PACKAGES=(
   jq
   curl
   fastfetch
+  figlet
   btop
   duf
   dust
@@ -98,9 +101,18 @@ PACMAN_PACKAGES=(
   man-db
   man-pages
   pavucontrol
+  dunst
+  rofi
+  wlogout
+  waypaper
+
+  # --- Terminals ---
+  kitty
+  # ghostty          # currently AUR on most Arch setups
 
   # --- Browser (swap to brave-bin after enabling Chaotic-AUR if preferred) ---
   firefox
+  chromium   # or google-chrome from AUR if you prefer the full Google version + chrome-flags.conf
 
   # --- Optional but commonly wanted with this setup ---
   # (removed foot - now using ghostty + kitty as main terminals)
@@ -123,6 +135,12 @@ YAY_PACKAGES=(
   python-pywalfox          # Used with matugen for Firefox theming
   qt6ct-kde
   bibata-cursor-theme-bin
+
+  # === Terminals ===
+  ghostty
+
+  # === Editors ===
+  vscodium-bin
 
   # === Declared in manifests ===
   opencode-bin

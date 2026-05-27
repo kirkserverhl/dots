@@ -59,3 +59,7 @@ The bootstrap script runs the package ensure step so you don't have to manually 
 ## .hyprgruv
 
 The old `~/.hyprgruv` directory is intentionally left as a historical backup / previous attempt. New development happens here (in the dots repo) under the `bootstrap/` and `packages/` areas.
+
+## VM Testing
+
+See `docs/VM_TEST.md` (in the repo root) for guidance on testing the full bootstrap + deployment flow in a virtual machine using the official Arch ISO. This is strongly recommended.

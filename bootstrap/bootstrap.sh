@@ -92,16 +92,19 @@ echo
 cat <<'EOF'
 Next steps:
 
-  # Make dotctl available
-  ~/.dots/dotctl/.local/bin/dotctl install dotctl
+  # Prefer dotctl when available
+  if [ -x ~/.dots/dotctl/.local/bin/dotctl ]; then
+      ~/.dots/dotctl/.local/bin/dotctl install dotctl
+      dotctl install all
+  else
+      echo "dotctl binary not present — falling back to migrate.sh"
+      ~/.dots/migrate.sh
+  fi
 
-  # Install everything (or pick specific packages)
-  dotctl install all
+See docs/VM_TEST.md for notes on testing this setup in a virtual machine (highly recommended).
 
-On your laptop or future machines:
-  1. git clone https://github.com/trevin-j/dots ~/.dots
-  2. Run this bootstrap script again
-  3. dotctl install all
+Special packages that create symlinks (oh-my-zsh full directory, wallpapers, etc.)
+are included in the default migrate.sh list.
 
 Edit packages in the dots repo on your main machine, commit, push.
 Other machines just pull and re-run the ensure steps above.

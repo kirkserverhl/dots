@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Atuin post-stow hook
+# Runs after the config has been stowed.
+#
+# TODO: Review and refine these instructions if setting up on a fresh machine again.
+# This is not critical — the important part is that the config is stowed.
+# You can safely improve the messaging / automation here later.
+
+echo "==> Running Atuin post-stow setup..."
+
+# Import existing shell history (safe to run multiple times)
+if command -v atuin >/dev/null 2>&1; then
+    echo "Importing shell history into Atuin (if needed)..."
+    atuin import auto || true
+else
+    echo "Warning: atuin command not found. Make sure it is installed."
+fi
+
+# Check sync / login status
+if command -v atuin >/dev/null 2>&1; then
+    if atuin status 2>/dev/null | grep -q "Logged in as"; then
+        echo "Atuin sync: Already logged in."
+    else
+        echo ""
+        echo "Atuin sync is not set up on this machine."
+        echo "To enable history sync, run:"
+        echo "    atuin login"
+        echo ""
+        echo "Or for a new account:"
+        echo "    atuin register"
+        echo ""
+    fi
+fi
+
+# Note about daemon
+echo ""
+echo "Note: Your Atuin config has the daemon enabled with autostart."
+echo "The daemon should start automatically on shell startup."
+echo ""
+
+echo "==> Atuin post-stow complete."

@@ -1,0 +1,129 @@
+Monitor DP-1 (ID 0):
+	1920x1080@60.00000 at 3320x950
+	description: LG Electronics LG FULL HD 103MXDM4F410
+	make: LG Electronics
+	model: LG FULL HD
+	physical size (mm): 480x270
+	serial: 103MXDM4F410
+	active workspace: 9 (9)
+	special workspace: 0 ()
+	reserved: 0 36 0 0
+	scale: 1.20
+	transform: 0
+	focused: no
+	dpmsStatus: 1
+	vrr: false
+	solitary: 0
+	solitaryBlockedBy: windowed mode,missing candidate
+	activelyTearing: false
+	tearingBlockedBy: next frame is not torn,user settings,missing candidate
+	directScanoutTo: 0
+	directScanoutBlockedBy: user settings,missing candidate
+	disabled: false
+	currentFormat: XRGB8888
+	mirrorOf: none
+	availableModes: 1920x1080@60.00Hz 1680x1050@59.95Hz 1400x1050@59.98Hz 1600x900@60.00Hz 1280x1024@75.03Hz 1280x1024@60.02Hz 1440x900@59.89Hz 1280x800@59.81Hz 1152x864@75.00Hz 1280x720@60.00Hz 1024x768@75.03Hz 1024x768@60.00Hz 800x600@75.00Hz 800x600@60.32Hz 640x480@75.00Hz 640x480@59.94Hz 720x400@70.08Hz 
+	colorManagementPreset: srgb
+	sdrBrightness: 1.00
+	sdrSaturation: 1.00
+	sdrMinLuminance: 0.20
+	sdrMaxLuminance: 80
+	hardwareCursorsInUse: true
+
+Monitor HDMI-A-1 (ID 1):
+	1920x1080@60.00000 at 4921x950
+	description: LG Electronics LG Monitor 0x01010101
+	make: LG Electronics
+	model: LG Monitor
+	physical size (mm): 600x340
+	serial: 0x01010101
+	active workspace: 10 (10)
+	special workspace: 0 ()
+	reserved: 0 36 0 0
+	scale: 1.20
+	transform: 0
+	focused: no
+	dpmsStatus: 1
+	vrr: false
+	solitary: 0
+	solitaryBlockedBy: windowed mode,missing candidate
+	activelyTearing: false
+	tearingBlockedBy: next frame is not torn,user settings,missing candidate
+	directScanoutTo: 0
+	directScanoutBlockedBy: user settings,missing candidate
+	disabled: false
+	currentFormat: XRGB8888
+	mirrorOf: none
+	availableModes: 1920x1080@59.93Hz 1920x1080@60.00Hz 1920x1080@59.94Hz 1920x1080@50.00Hz 1920x1080@30.00Hz 1920x1080@29.97Hz 1920x1080@24.00Hz 1920x1080@23.98Hz 1280x1024@60.02Hz 1360x768@59.96Hz 1152x864@59.97Hz 1280x720@60.00Hz 1280x720@59.94Hz 1280x720@50.00Hz 1024x768@60.00Hz 800x600@60.32Hz 720x576@50.00Hz 720x480@60.00Hz 720x480@60.00Hz 720x480@59.94Hz 720x480@59.94Hz 640x480@60.00Hz 640x480@59.94Hz 640x480@59.94Hz 720x400@70.08Hz 
+	colorManagementPreset: srgb
+	sdrBrightness: 1.00
+	sdrSaturation: 1.00
+	sdrMinLuminance: 0.20
+	sdrMaxLuminance: 80
+	hardwareCursorsInUse: true
+
+Monitor DVI-I-1 (ID 2):
+	1920x1080@60.00000 at 2420x760
+	description: LG Electronics 24CN65 304MXGL9B911
+	make: LG Electronics
+	model: 24CN65
+	physical size (mm): 480x270
+	serial: 304MXGL9B911
+	active workspace: 11 (11)
+	special workspace: 0 ()
+	reserved: 0 36 0 0
+	scale: 1.20
+	transform: 1
+	focused: no
+	dpmsStatus: 1
+	vrr: false
+	solitary: 0
+	solitaryBlockedBy: windowed mode,missing candidate
+	activelyTearing: false
+	tearingBlockedBy: next frame is not torn,user settings,missing candidate
+	directScanoutTo: 0
+	directScanoutBlockedBy: user settings,missing candidate
+	disabled: false
+	currentFormat: XRGB8888
+	mirrorOf: none
+	availableModes: 1920x1080@60.00Hz 1920x1080@74.97Hz 1920x1080@60.00Hz 1920x1080@59.94Hz 1920x1080@50.00Hz 1680x1050@59.88Hz 1400x1050@59.95Hz 1600x900@60.00Hz 1280x1024@75.03Hz 1280x1024@60.02Hz 1440x900@59.90Hz 1280x800@59.91Hz 1152x864@75.00Hz 1280x720@60.00Hz 1280x720@60.00Hz 1280x720@59.94Hz 1280x720@50.00Hz 1024x768@75.03Hz 1024x768@60.00Hz 800x600@75.00Hz 800x600@60.32Hz 720x576@50.00Hz 720x480@60.00Hz 720x480@60.00Hz 720x480@59.94Hz 720x480@59.94Hz 640x480@75.00Hz 640x480@60.00Hz 640x480@59.94Hz 640x480@59.94Hz 720x400@70.08Hz 
+	colorManagementPreset: srgb
+	sdrBrightness: 1.00
+	sdrSaturation: 1.00
+	sdrMinLuminance: 0.20
+	sdrMaxLuminance: 80
+	hardwareCursorsInUse: true
+
+Monitor DVI-I-2 (ID 3):
+	1920x1080@60.00000 at 6522x950
+	description: LG Electronics LG TV SSCR2 0x01010101
+	make: LG Electronics
+	model: LG TV SSCR2
+	physical size (mm): 1600x900
+	serial: 0x01010101
+	active workspace: 12 (12)
+	special workspace: 0 ()
+	reserved: 0 36 0 0
+	scale: 1.20
+	transform: 0
+	focused: yes
+	dpmsStatus: 1
+	vrr: false
+	solitary: 0
+	solitaryBlockedBy: windowed mode,missing candidate
+	activelyTearing: false
+	tearingBlockedBy: next frame is not torn,user settings,missing candidate
+	directScanoutTo: 0
+	directScanoutBlockedBy: user settings,missing candidate
+	disabled: false
+	currentFormat: XRGB8888
+	mirrorOf: none
+	availableModes: 3840x2160@60.00Hz 4096x2160@60.00Hz 4096x2160@59.94Hz 4096x2160@50.00Hz 4096x2160@30.00Hz 4096x2160@29.97Hz 4096x2160@25.00Hz 4096x2160@24.00Hz 4096x2160@23.98Hz 3840x2160@60.00Hz 3840x2160@59.94Hz 3840x2160@50.00Hz 3840x2160@30.00Hz 3840x2160@29.97Hz 3840x2160@25.00Hz 3840x2160@24.00Hz 3840x2160@23.98Hz 2560x1440@120.00Hz 1920x1080@120.00Hz 1920x1080@119.88Hz 1920x1080@100.00Hz 1920x1080@60.00Hz 1920x1080@60.00Hz 1920x1080@59.94Hz 1920x1080@50.00Hz 1920x1080@30.00Hz 1920x1080@29.97Hz 1920x1080@25.00Hz 1920x1080@24.00Hz 1920x1080@23.98Hz 1280x1024@60.02Hz 1152x864@59.97Hz 1280x720@60.00Hz 1280x720@59.94Hz 1280x720@50.00Hz 1024x768@60.00Hz 800x600@60.32Hz 720x576@50.00Hz 720x480@60.00Hz 720x480@60.00Hz 720x480@59.94Hz 720x480@59.94Hz 640x480@60.00Hz 640x480@59.94Hz 640x480@59.94Hz 720x400@70.08Hz 
+	colorManagementPreset: srgb
+	sdrBrightness: 1.00
+	sdrSaturation: 1.00
+	sdrMinLuminance: 0.20
+	sdrMaxLuminance: 80
+	hardwareCursorsInUse: true
+
+

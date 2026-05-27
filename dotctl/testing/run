@@ -1,0 +1,483 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+PACKAGE_DIR=$(cd -- "$SCRIPT_DIR/.." && pwd -P)
+REPO_ROOT=$(cd -- "$PACKAGE_DIR/.." && pwd -P)
+DOTCTL_SCRIPT="$PACKAGE_DIR/.local/bin/dotctl"
+
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR/lib/assert.sh"
+
+TEST_COUNT=0
+
+cleanup_sandbox() {
+    if [[ -n "${TEST_ROOT:-}" && -d "$TEST_ROOT" ]]; then
+        rm -rf "$TEST_ROOT"
+    fi
+}
+
+create_stub_commands() {
+    cat >"$SANDBOX_BIN/stow" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+LOG_DIR=${DOTCTL_TEST_LOG_DIR:?}
+
+dir=""
+target=""
+dry_run="false"
+pkg=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --dir=*) dir=${1#--dir=} ;;
+        --target=*) target=${1#--target=} ;;
+        --dir)
+            shift
+            dir="$1"
+            ;;
+        --target)
+            shift
+            target="$1"
+            ;;
+        -n|-nv|-vn)
+            dry_run="true"
+            ;;
+        --no-folding|-v)
+            ;;
+        *)
+            pkg="$1"
+            ;;
+    esac
+    shift
+done
+
+if [[ "$dry_run" == "true" ]]; then
+    printf 'stow-dry-run %s\n' "$pkg" >>"$LOG_DIR/stow-dry-run.log"
+    exit 0
+fi
+
+printf 'stow %s\n' "$pkg" >>"$LOG_DIR/stow.log"
+
+link_tree() {
+    local src_root="$1"
+    local dst_root="$2"
+    mkdir -p "$dst_root"
+
+    local src_item base dst_item
+    for src_item in "$src_root"/* "$src_root"/.[!.]* "$src_root"/..?*; do
+        [[ -e "$src_item" || -L "$src_item" ]] || continue
+        base=$(basename "$src_item")
+        dst_item="$dst_root/$base"
+
+        if [[ -d "$src_item" && ! -L "$src_item" ]]; then
+            rm -rf "$dst_item"
+            mkdir -p "$dst_item"
+            link_tree "$src_item" "$dst_item"
+        else
+            mkdir -p "$(dirname "$dst_item")"
+            rm -rf "$dst_item"
+            ln -s "$src_item" "$dst_item"
+        fi
+    done
+}
+
+link_tree "$dir/$pkg" "$target"
+EOF
+
+    cat >"$SANDBOX_BIN/git" <<'EOF'
+#!/usr/bin/env bash
+
+LOG_DIR=${DOTCTL_TEST_LOG_DIR:?}
+GIT_STUB_DIRTY=${GIT_STUB_DIRTY:-0}
+
+if [[ "$1" == "-C" ]]; then
+    shift 2
+fi
+
+GIT_DIR=${DOTDIR:-.}
+
+case "$1" in
+    log)
+        printf 'current-%s\n' "${@: -1}"
+        ;;
+    pull)
+        printf 'git pull\n' >>"$LOG_DIR/git.log"
+        ;;
+    clone)
+        printf 'git clone %s\n' "$2" >>"$LOG_DIR/git.log"
+        ;;
+    diff-index)
+        if [[ "$GIT_STUB_DIRTY" == "1" ]]; then
+            exit 1
+        fi
+        exit 0
+        ;;
+    symbolic-ref)
+        if [[ "$*" == *"symbolic-ref -q HEAD"* ]]; then
+            exit 0
+        fi
+        if [[ "$*" == *"symbolic-ref --short HEAD"* ]]; then
+            printf 'master\n'
+            exit 0
+        fi
+        exit 1
+        ;;
+    stash)
+        printf 'git stash %s\n' "${2:-}" >>"$LOG_DIR/git.log"
+        ;;
+    *)
+        printf 'git %s\n' "$*" >>"$LOG_DIR/git.log"
+        ;;
+esac
+EOF
+
+    cat >"$SANDBOX_BIN/sudo" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+exec "$@"
+EOF
+
+    cat >"$SANDBOX_BIN/pacman" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+printf 'pacman %s\n' "$*" >>"${DOTCTL_TEST_LOG_DIR:?}/pacman.log"
+EOF
+
+    cat >"$SANDBOX_BIN/paru" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+printf 'paru %s\n' "$*" >>"${DOTCTL_TEST_LOG_DIR:?}/aur.log"
+EOF
+
+    cat >"$SANDBOX_BIN/yay" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+printf 'yay %s\n' "$*" >>"${DOTCTL_TEST_LOG_DIR:?}/aur.log"
+EOF
+
+    chmod +x "$SANDBOX_BIN"/*
+}
+
+setup_sandbox() {
+    cleanup_sandbox
+    TEST_ROOT=$(mktemp -d "${TMPDIR:-/tmp}/dotctl-test.XXXXXX")
+    SANDBOX_HOME="$TEST_ROOT/home"
+    SANDBOX_DOTDIR="$TEST_ROOT/dotdir"
+    SANDBOX_BIN="$TEST_ROOT/bin"
+    SANDBOX_LOG="$TEST_ROOT/log"
+
+    mkdir -p "$SANDBOX_HOME" "$SANDBOX_DOTDIR" "$SANDBOX_BIN" "$SANDBOX_LOG"
+    cp -r "$REPO_ROOT/_package_template" "$SANDBOX_DOTDIR/_package_template"
+    cp -r "$REPO_ROOT/dotctl" "$SANDBOX_DOTDIR/dotctl"
+
+    create_stub_commands
+
+    export HOME="$SANDBOX_HOME"
+    export DOTDIR="$SANDBOX_DOTDIR"
+    export PATH="$SANDBOX_BIN:$PATH"
+    export DOTCTL_TEST_LOG_DIR="$SANDBOX_LOG"
+}
+
+make_package() {
+    local name="$1"
+    local manifest_body="$2"
+
+    mkdir -p "$DOTDIR/$name/meta" "$DOTDIR/$name/.config/$name"
+    printf '%s\n' "$manifest_body" >"$DOTDIR/$name/meta/manifest.sh"
+    printf '%s\n' "$name" >"$DOTDIR/$name/.config/$name/config"
+}
+
+run_case() {
+    local name="$1"
+    shift
+
+    TEST_COUNT=$((TEST_COUNT + 1))
+    printf '[%02d] %s... ' "$TEST_COUNT" "$name"
+    "$@"
+    echo 'ok'
+}
+
+test_add_alias_tracks_path() {
+    setup_sandbox
+    mkdir -p "$HOME/.config/demo"
+    printf 'hello\n' >"$HOME/.config/demo/config.ini"
+
+    "$DOTCTL_SCRIPT" add demo "$HOME/.config/demo"
+
+    assert_file_exists "$DOTDIR/demo/.config/demo/config.ini"
+    assert_file_exists "$HOME/.config/demo"
+    assert_is_symlink "$HOME/.config/demo/config.ini"
+    assert_not_exists "$DOTDIR/demo/.dots"
+}
+
+test_repeat_track_skips_nested_retrack() {
+    setup_sandbox
+    mkdir -p "$HOME/.config/demo"
+    printf 'hello\n' >"$HOME/.config/demo/config.ini"
+
+    "$DOTCTL_SCRIPT" track demo "$HOME/.config/demo"
+    printf 'new\n' >"$HOME/.config/demo/new.ini"
+    "$DOTCTL_SCRIPT" add demo "$HOME/.config/demo"
+
+    assert_file_exists "$DOTDIR/demo/.config/demo/new.ini"
+    assert_is_symlink "$HOME/.config/demo/new.ini"
+    assert_not_exists "$DOTDIR/demo/.dots"
+    assert_not_exists "$DOTDIR/demo/home"
+}
+
+test_repeat_add_merges_non_folded_directory() {
+    setup_sandbox
+    mkdir -p "$DOTDIR/foot/meta" "$DOTDIR/foot/.config/foot"
+    printf 'export requires=()\n' >"$DOTDIR/foot/meta/manifest.sh"
+    printf 'layout\n' >"$DOTDIR/foot/.config/foot/config.kdl"
+    mkdir -p "$HOME/.config/foot"
+    stow --dir="$DOTDIR" --target="$HOME" --no-folding foot
+
+    mkdir -p "$HOME/.config/foot/scripts"
+    printf 'one\n' >"$HOME/.config/foot/scripts/rename-session.sh"
+
+    output=$("$DOTCTL_SCRIPT" add foot "$HOME/.config/foot/scripts")
+
+    printf 'two\n' >"$HOME/.config/foot/scripts/new.sh"
+    "$DOTCTL_SCRIPT" add foot "$HOME/.config/foot/scripts"
+
+    assert_output_contains "$output" 'Stowing foot...'
+    assert_file_exists "$DOTDIR/foot/.config/foot/scripts/new.sh"
+    assert_is_symlink "$HOME/.config/foot/scripts/new.sh"
+    assert_not_exists "$DOTDIR/foot/.dots"
+}
+
+test_install_resolves_dependencies_once() {
+    setup_sandbox
+    make_package c $'export requires=()\nexport pacman_deps=(legacy-c)'
+    make_package b $'export requires=(c)\nexport aur_deps=(aur-b)'
+    make_package a $'export requires=(b c)\nexport pacman_deps=(pkg-a)'
+
+    "$DOTCTL_SCRIPT" install a
+
+    assert_file_contains "$SANDBOX_LOG/stow.log" 'stow c'
+    assert_file_contains "$SANDBOX_LOG/stow.log" 'stow b'
+    assert_file_contains "$SANDBOX_LOG/stow.log" 'stow a'
+    order=$(tr '\n' ' ' <"$SANDBOX_LOG/stow.log")
+    assert_output_contains "$order" 'stow c stow b stow a'
+    assert_file_contains "$SANDBOX_LOG/pacman.log" 'legacy-c'
+    assert_file_contains "$SANDBOX_LOG/pacman.log" 'pkg-a'
+    assert_file_contains "$SANDBOX_LOG/aur.log" 'aur-b'
+}
+
+test_install_detects_cycles() {
+    setup_sandbox
+    make_package x $'export requires=(y)' 
+    make_package y $'export requires=(x)' 
+
+    if output=$("$DOTCTL_SCRIPT" install x 2>&1); then
+        fail 'Expected cycle detection to fail'
+    fi
+
+    assert_output_contains "$output" "Dependency cycle detected"
+}
+
+test_install_consumes_global_flags() {
+    setup_sandbox
+    make_package demo $'export requires=()\nexport pacman_deps=(demo-pkg)'
+
+    output=$("$DOTCTL_SCRIPT" install demo --force)
+
+    assert_output_contains "$output" 'Installing packages: demo'
+    assert_file_contains "$SANDBOX_LOG/stow.log" 'stow demo'
+}
+
+test_hook_file_runs_pre_stow() {
+    setup_sandbox
+    make_package demo $'export requires=()'
+    printf 'echo pre_stow_ran >> "%s/hook.log"\n' "$SANDBOX_LOG" >"$DOTDIR/demo/meta/pre_stow"
+    chmod +x "$DOTDIR/demo/meta/pre_stow"
+
+    "$DOTCTL_SCRIPT" install demo
+
+    assert_file_contains "$SANDBOX_LOG/hook.log" 'pre_stow_ran'
+}
+
+test_hook_file_runs_post_stow() {
+    setup_sandbox
+    make_package demo $'export requires=()'
+    printf 'echo post_stow_ran >> "%s/hook.log"\n' "$SANDBOX_LOG" >"$DOTDIR/demo/meta/post_stow"
+    chmod +x "$DOTDIR/demo/meta/post_stow"
+
+    "$DOTCTL_SCRIPT" install demo
+
+    assert_file_contains "$SANDBOX_LOG/hook.log" 'post_stow_ran'
+}
+
+test_missing_hook_does_not_error() {
+    setup_sandbox
+    make_package demo $'export requires=()'
+
+    output=$("$DOTCTL_SCRIPT" install demo)
+
+    assert_output_contains "$output" 'Installing packages: demo'
+    assert_output_contains "$output" 'Finished installing demo.'
+}
+
+test_conflict_detection_reports_existing_file() {
+    setup_sandbox
+    make_package demo $'export requires=()'
+    mkdir -p "$HOME/.config/demo"
+    printf 'existing\n' >"$HOME/.config/demo/config"
+
+    output=$("$DOTCTL_SCRIPT" install demo -y 2>&1 || true)
+
+    assert_output_contains "$output" 'Conflicts detected in package '\''demo'\'''
+    assert_output_contains "$output" '~/.config/demo/config'
+}
+
+test_conflict_detection_skips_managed_symlink() {
+    setup_sandbox
+    make_package demo $'export requires=()'
+    mkdir -p "$DOTDIR/demo/.config/demo"
+    printf 'managed\n' >"$DOTDIR/demo/.config/demo/config"
+    mkdir -p "$HOME/.config/demo"
+    ln -s "$DOTDIR/demo/.config/demo/config" "$HOME/.config/demo/config"
+
+    output=$("$DOTCTL_SCRIPT" install demo -y 2>&1 || true)
+
+    assert_output_not_contains "$output" 'Conflicts detected'
+}
+
+test_conflict_detection_reports_broken_symlink() {
+    setup_sandbox
+    make_package demo $'export requires=()'
+    mkdir -p "$HOME/.config/demo"
+    ln -s "$DOTDIR/nonexistent" "$HOME/.config/demo/config"
+
+    output=$("$DOTCTL_SCRIPT" install demo -y 2>&1 || true)
+
+    assert_output_contains "$output" 'Conflicts detected in package '\''demo'\'''
+}
+
+test_conflict_backup_and_install_succeeds() {
+    setup_sandbox
+    make_package demo $'export requires=()'
+    mkdir -p "$HOME/.config/demo"
+    printf 'to-be-backed-up\n' >"$HOME/.config/demo/config"
+
+    output=$("$DOTCTL_SCRIPT" install demo -y)
+
+    assert_output_contains "$output" 'Backing up'
+    assert_output_contains "$output" 'Finished installing demo.'
+    assert_file_contains "$SANDBOX_LOG/stow.log" 'stow demo'
+}
+
+test_conflict_aborts_without_confirmation() {
+    setup_sandbox
+    make_package demo $'export requires=()'
+    mkdir -p "$HOME/.config/demo"
+    printf 'conflict\n' >"$HOME/.config/demo/config"
+
+    if "$DOTCTL_SCRIPT" install demo 2>/dev/null; then
+        fail 'Expected install to fail due to conflict'
+    fi
+
+    assert_not_exists "$SANDBOX_LOG/stow.log"
+}
+
+test_upgrade_rejects_no_pull_flag() {
+    setup_sandbox
+    make_package demo $'export requires=()'
+    mkdir -p "$HOME/.local/share/dotctl"
+    printf 'fake-demo\n' >"$HOME/.local/share/dotctl/demo.commit"
+
+    output=$("$DOTCTL_SCRIPT" upgrade --no-pull 2>&1 || true)
+
+    assert_output_contains "$output" '--no-pull is no longer supported for upgrade'
+    assert_output_contains "$output" 'use sync or update instead'
+}
+
+test_upgrade_prunes_stale_package() {
+    setup_sandbox
+    mkdir -p "$HOME/.local/share/dotctl"
+    printf 'stale-commit\n' >"$HOME/.local/share/dotctl/stale.commit"
+
+    output=$("$DOTCTL_SCRIPT" upgrade 2>&1)
+
+    assert_output_contains "$output" 'Removing stale commit records'
+    assert_output_contains "$output" 'stale'
+    assert_not_exists "$HOME/.local/share/dotctl/stale.commit"
+    assert_not_exists "$SANDBOX_LOG/stow.log"
+}
+
+test_sync_succeeds_on_clean_repo() {
+    setup_sandbox
+    export GIT_STUB_DIRTY=0
+
+    output=$("$DOTCTL_SCRIPT" sync)
+
+    assert_output_contains "$output" 'Syncing'
+    assert_output_contains "$output" 'Sync complete.'
+}
+
+test_sync_fails_on_dirty_repo() {
+    setup_sandbox
+    export GIT_STUB_DIRTY=1
+
+    if output=$("$DOTCTL_SCRIPT" sync 2>&1); then
+        fail 'Expected sync to fail on dirty repo'
+    fi
+
+    assert_output_contains "$output" 'Uncommitted changes detected'
+    assert_output_contains "$output" 'Commit or stash'
+}
+
+test_update_combines_sync_and_upgrade() {
+    setup_sandbox
+    export GIT_STUB_DIRTY=0
+    make_package demo $'export requires=()'
+    mkdir -p "$HOME/.local/share/dotctl"
+    printf 'fake-demo\n' >"$HOME/.local/share/dotctl/demo.commit"
+
+    output=$("$DOTCTL_SCRIPT" update)
+
+    assert_output_contains "$output" 'Syncing'
+    assert_output_contains "$output" 'Upgrading demo...'
+    assert_output_contains "$output" 'Finished installing demo.'
+}
+
+test_installed_symlink_works() {
+    setup_sandbox
+    mkdir -p "$HOME/.local/bin"
+    ln -s "$DOTCTL_SCRIPT" "$HOME/.local/bin/dotctl"
+
+    output=$(PATH="$HOME/.local/bin:$PATH" "$HOME/.local/bin/dotctl" help)
+
+    assert_output_contains "$output" 'dotctl - manage your dotfiles'
+    assert_output_contains "$output" 'dotctl [--force] [-y] add [PACKAGE] [...PATH]'
+    assert_output_contains "$output" 'sync        Pull the dotfiles repo safely'
+    assert_output_contains "$output" 'update      Sync the repo then upgrade installed packages'
+}
+
+trap cleanup_sandbox EXIT
+
+run_case 'add alias tracks path' test_add_alias_tracks_path
+run_case 'repeat track avoids nesting' test_repeat_track_skips_nested_retrack
+run_case 'repeat add merges non-folded dir' test_repeat_add_merges_non_folded_directory
+run_case 'install resolves dependencies once' test_install_resolves_dependencies_once
+run_case 'install detects dependency cycles' test_install_detects_cycles
+run_case 'install consumes global flags' test_install_consumes_global_flags
+run_case 'hook file runs pre_stow' test_hook_file_runs_pre_stow
+run_case 'hook file runs post_stow' test_hook_file_runs_post_stow
+run_case 'missing hook does not error' test_missing_hook_does_not_error
+run_case 'conflict detection reports existing file' test_conflict_detection_reports_existing_file
+run_case 'conflict detection skips managed symlink' test_conflict_detection_skips_managed_symlink
+run_case 'conflict detection reports broken symlink' test_conflict_detection_reports_broken_symlink
+run_case 'conflict backup and install succeeds' test_conflict_backup_and_install_succeeds
+run_case 'conflict aborts without confirmation' test_conflict_aborts_without_confirmation
+run_case 'upgrade rejects no-pull flag' test_upgrade_rejects_no_pull_flag
+run_case 'upgrade prunes stale package' test_upgrade_prunes_stale_package
+run_case 'sync succeeds on clean repo' test_sync_succeeds_on_clean_repo
+run_case 'sync fails on dirty repo' test_sync_fails_on_dirty_repo
+run_case 'update combines sync and upgrade' test_update_combines_sync_and_upgrade
+run_case 'installed symlink works' test_installed_symlink_works
+
+echo "All $TEST_COUNT dotctl tests passed."

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Hardcoded paths in the hyprland package require DOTDIR to be ~/.dots
+if [[ -n "${DOTDIR:-}" && "$DOTDIR" != "$HOME/.dots" ]]; then
+    echo "error: DOTDIR must be either empty or set to '$HOME/.dots' for the hyprland package." >&2
+    echo "       Current value: '$DOTDIR'" >&2
+    exit 1
+fi

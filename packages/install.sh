@@ -95,6 +95,7 @@ PACMAN_PACKAGES=(
   fastfetch
   figlet
   btop
+  htop
   duf
   dust
   ncdu

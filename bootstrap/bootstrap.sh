@@ -11,15 +11,16 @@
 #
 # Usage (on a fresh Arch-based machine):
 #   git clone https://github.com/trevin-j/dots ~/.dots
-#   ~/.dots/bootstrap/bootstrap.sh
+#   ~/.dots/bootstrap/bootstrap.sh --with-chaotic
 #
-#   # Then:
-#   ~/.dots/dotctl/.local/bin/dotctl install dotctl
-#   dotctl install all
+# This now does:
+#   - Install base tools + yay + all declared packages
+#   - Automatically run migrate.sh to deploy configs (unless --minimal or --no-migrate)
 #
 # Options:
 #   --with-chaotic     Set up Chaotic-AUR (recommended)
-#   --minimal          Skip optional niceties
+#   --minimal          Skip optional niceties + skip auto migration
+#   --no-migrate       Skip automatic config deployment (packages only)
 #   --help
 
 set -euo pipefail
@@ -33,11 +34,13 @@ warn() { printf '\033[1;33m==>\033[0m %s\n' "$*" >&2; }
 
 WITH_CHAOTIC=false
 MINIMAL=false
+NO_MIGRATE=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --with-chaotic) WITH_CHAOTIC=true; shift ;;
     --minimal)      MINIMAL=true; shift ;;
+    --no-migrate)   NO_MIGRATE=true; shift ;;
     --help|-h)
       sed -n '2,20p' "$0" | sed 's/^# //'
       exit 0
@@ -85,27 +88,38 @@ else
   warn "packages/install.sh not found or not executable — skipping package ensure step"
 fi
 
-# ---------- step 5: final instructions ----------
+# ---------- step 5: automatic config deployment (migrate.sh) ----------
+if [[ "$MINIMAL" != true && "$NO_MIGRATE" != true ]]; then
+  if [[ -x "$DOTS_DIR/migrate.sh" ]]; then
+    log "Running migrate.sh to deploy all configs (including special packages like oh-my-zsh and wallpapers)..."
+    "$DOTS_DIR/migrate.sh" || warn "migrate.sh completed with warnings. Check output above."
+  else
+    warn "migrate.sh not found — skipping automatic config deployment"
+  fi
+else
+  log "Skipping automatic migration (--minimal or --no-migrate used)"
+fi
+
+# ---------- step 6: final instructions ----------
 echo
 log "Bootstrap complete."
 echo
 cat <<'EOF'
-Next steps (recommended order for testing / new machines):
+Bootstrap has finished and (unless --minimal or --no-migrate was used) your configs
+have been deployed via migrate.sh.
 
-  1. Run the main migration (this handles most packages + special ones like oh-my-zsh and wallpapers):
-     ~/.dots/migrate.sh
+Next steps on this machine:
+  - Reboot or log out/in
+  - Start your desktop environment / window manager (e.g. Hyprland)
 
-  2. (Optional) Once dotctl is ready and you prefer it:
-     ~/.dots/dotctl/.local/bin/dotctl install dotctl
-     dotctl install all
-
-migrate.sh is currently the more reliable path, especially early on or in VMs.
+For future testing on new VMs:
+  1. Base Arch install
+  2. git clone ... ~/.dots
+  3. cd ~/.dots
+  4. ./bootstrap/bootstrap.sh --with-chaotic     ← This now does packages + full deployment
 
 See docs/VM_TEST.md for realistic expectations when testing in a virtual machine.
 
-Special packages (oh-my-zsh full directory, wallpapers, etc.) are included
-in the default list inside migrate.sh and have post_stow hooks.
-
 Edit packages in the dots repo on your main machine, commit, push.
-Other machines just pull and re-run the bootstrap + migrate.
+Other machines just pull and re-run the bootstrap.
 EOF

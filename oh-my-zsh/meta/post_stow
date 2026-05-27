@@ -8,6 +8,9 @@ if [ -d "$HOME/.oh-my-zsh" ]; then
     chmod -R u+rwX "$HOME/.oh-my-zsh" 2>/dev/null || true
 fi
 
+# Note: If this hook ran but the symlink is broken, it usually means
+# migrate.sh was run before 'stow' was installed (run bootstrap first).
+
 # Reminder about custom plugins
 cat <<'MSG'
 

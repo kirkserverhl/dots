@@ -4,21 +4,19 @@ Fresh, minimal, and maintainable dotfiles using GNU Stow + a small `dotctl` help
 
 **Location:** `~/.dots`
 
-## Quick Start on a New Machine
+## Quick Start on a New Machine / VM
+
+Simplest one-command flow:
 
 ```bash
 git clone <your-repo> ~/.dots
 cd ~/.dots
-./migrate.sh --dry-run          # See what would happen
-./migrate.sh                    # Safe migration with backups
-```
-
-Or use the bootstrap tool for full package installation:
-
-```bash
 ./bootstrap/bootstrap.sh --with-chaotic
-./ensure.sh
 ```
+
+This now installs packages **and** automatically deploys all configs via migrate.sh (including special packages like oh-my-zsh and wallpapers).
+
+Use `--minimal` or `--no-migrate` if you only want packages installed.
 
 ## Structure
 

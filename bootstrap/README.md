@@ -30,16 +30,24 @@ After this runs, **dotctl + GNU Stow** handle all your configs, `~/.local` files
 
 This keeps everything in sync without needing a giant "one script to rule them all."
 
-## Usage
+## Usage (Fresh Machine / VM)
+
+The simplest one-command flow:
 
 ```bash
 git clone https://github.com/trevin-j/dots ~/.dots
-~/.dots/bootstrap/bootstrap.sh --with-chaotic
+cd ~/.dots
+./bootstrap/bootstrap.sh --with-chaotic
 ```
 
+This single command now does:
+- Install base tools + yay + all packages declared in manifests
+- Automatically run `./migrate.sh` to deploy all your configs (including special packages like oh-my-zsh and wallpapers)
+
 Common options:
-- `--with-chaotic` — Strongly recommended. Makes many AUR packages installable via pacman.
-- `--minimal` — Skips some nice-to-haves.
+- `--with-chaotic` — Strongly recommended.
+- `--minimal` — Stop after package installation (skip auto migration)
+- `--no-migrate` — Same as above (explicit)
 
 ## What Gets Installed
 

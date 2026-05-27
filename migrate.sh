@@ -31,6 +31,22 @@ if [[ ${#PACKAGES[@]} -eq 0 ]]; then
     PACKAGES=("${DEFAULT_PACKAGES[@]}")
 fi
 
+# Early check for stow
+if ! command -v stow >/dev/null 2>&1; then
+    echo "ERROR: 'stow' command not found."
+    echo ""
+    echo "You are trying to run migrate.sh on a system where the required tools are not installed."
+    echo ""
+    echo "Correct sequence on a brand new machine:"
+    echo "  1. git clone <your-repo> ~/.dots"
+    echo "  2. cd ~/.dots"
+    echo "  3. ./bootstrap/bootstrap.sh --with-chaotic"
+    echo "  4. ./migrate.sh"
+    echo ""
+    echo "Do NOT run migrate.sh directly after a fresh install."
+    exit 1
+fi
+
 echo "==> New dotfiles location: $DOTS_DIR"
 echo "==> Backups will go to:    $BACKUP_BASE"
 echo "==> Packages to migrate:   ${PACKAGES[*]}"

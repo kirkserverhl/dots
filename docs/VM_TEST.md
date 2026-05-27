@@ -27,15 +27,17 @@ This document describes how to test the full dots setup in a virtual machine (re
    git clone https://github.com/trevin-j/dots ~/.dots
    cd ~/.dots
    ```
-5. Run the bootstrap:
+
+5. Run the bootstrap script:
    ```bash
    ./bootstrap/bootstrap.sh --with-chaotic
    ```
-6. At this point you should have yay + most declared packages.
 
-7. Deploy configs:
-   - Preferred (once ready): `dotctl install all`
-   - Fallback: `./migrate.sh`
+   This single command now handles:
+   - Installing base tools + yay + all packages
+   - Automatically running `./migrate.sh` to deploy your configs
+
+   (Use `--minimal` or `--no-migrate` if you want to stop after packages only.)
 
 8. Special packages that need extra attention:
    - `oh-my-zsh` (full directory symlink)

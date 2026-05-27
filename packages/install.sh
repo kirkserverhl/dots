@@ -66,6 +66,8 @@ PACMAN_PACKAGES=(
   ffmpegthumbnailer
 
   # --- Hyprland (lean, no full desktop bloat) ---
+  # These packages are sufficient to get a working Hyprland environment
+  # on a minimal Arch install (no archinstall desktop profile required).
   hyprland
   hyprpolkitagent
   hyprpicker
@@ -75,6 +77,8 @@ PACMAN_PACKAGES=(
   brightnessctl
   xdg-desktop-portal-hyprland
   xdg-desktop-portal
+  polkit
+  xdg-desktop-portal-gtk   # fallback portal for some apps
 
   # PipeWire audio
   pipewire
@@ -88,6 +92,13 @@ PACMAN_PACKAGES=(
   papirus-icon-theme
   adw-gtk-theme
   ttf-material-symbols-variable
+
+  # --- Fonts (moved from repo into packages for smaller dotfiles size) ---
+  # These are the ones we no longer ship manually in home/.fonts/
+  ttf-iosevka-nerd
+  ttf-jetbrains-mono-nerd
+  ttf-ubuntu-nerd
+  ttf-zed-mono-nerd
 
   # --- Daily utilities (keep this list small) ---
   jq
@@ -133,7 +144,7 @@ PACMAN_PACKAGES=(
 YAY_PACKAGES=(
   # === Theming (critical for this dots setup) ===
   matugen-git
-  python-pywalfox          # Used with matugen for Firefox theming
+  python-pywalfox          # Matugen Firefox theming integration (not old pywal)
   bibata-cursor-theme-bin
 
   # === Terminals ===
@@ -146,6 +157,7 @@ YAY_PACKAGES=(
   opencode-bin
 
   # === Nice-to-haves that are usually true AUR or you want latest -git ===
+  gum
   # wvkbd-git
 
   # === Add your personal "must build from AUR" packages below ===

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Launcher for the dots welcome/setup tool
+
+# Try to find the dots directory
+if [[ -d "$HOME/.dots/setup" ]]; then
+    DOTS_DIR="$HOME/.dots"
+elif [[ -d "/home/kirk/.dots/setup" ]]; then
+    DOTS_DIR="/home/kirk/.dots"
+else
+    # Fallback: assume this script lives in a dots repo
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    DOTS_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+fi
+
+exec "$DOTS_DIR/setup/welcome.sh" "$@"

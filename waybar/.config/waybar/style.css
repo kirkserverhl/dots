@@ -1,6 +1,0 @@
-/* Root waybar style - clean entrypoint using your freshstart setup */
-
-@import "colors.css";
-
-/* Main rich module styling */
-@import "freshstart.css";

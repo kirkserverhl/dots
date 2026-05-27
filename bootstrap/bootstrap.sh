@@ -91,7 +91,7 @@ fi
 # ---------- step 5: automatic config deployment (migrate.sh) ----------
 if [[ "$MINIMAL" != true && "$NO_MIGRATE" != true ]]; then
   if [[ -x "$DOTS_DIR/migrate.sh" ]]; then
-    log "Running migrate.sh to deploy all configs (including special packages like oh-my-zsh and wallpapers)..."
+    log "Running migrate.sh to deploy configs via the home/ stow package..."
     "$DOTS_DIR/migrate.sh" || warn "migrate.sh completed with warnings. Check output above."
   else
     warn "migrate.sh not found — skipping automatic config deployment"
@@ -100,13 +100,26 @@ else
   log "Skipping automatic migration (--minimal or --no-migrate used)"
 fi
 
+# ---------- step 6: Hyprland readiness note ----------
+log "Hyprland environment should now be ready."
+echo "You can start it with: Hyprland"
+echo "(No archinstall desktop profile is required — all necessary packages were installed above.)"
+
+# ---------- Optional welcome / post-setup screen ----------
+if [[ -x "$DOTS_DIR/setup/welcome.sh" ]]; then
+    if [[ ! -f "${XDG_CONFIG_HOME:-$HOME/.config}/dots/welcome-disabled" ]]; then
+        log "Launching dots welcome/setup screen..."
+        "$DOTS_DIR/setup/welcome.sh" || true
+    fi
+fi
+
 # ---------- step 6: final instructions ----------
 echo
 log "Bootstrap complete."
 echo
 cat <<'EOF'
 Bootstrap has finished and (unless --minimal or --no-migrate was used) your configs
-have been deployed via migrate.sh.
+have been deployed via "stow home" through migrate.sh.
 
 Next steps on this machine:
   - Reboot or log out/in

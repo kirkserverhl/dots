@@ -101,8 +101,18 @@ stow_package() {
         stow --dir="$DOTS_DIR" --target="$HOME" --no-folding "$pkg" 2>&1 || {
             echo "  Warning: stow had issues for $pkg (check manually)"
         }
+
+        # Run post_stow hook if it exists
+        local post_hook="$pkg_path/meta/post_stow"
+        if [[ -x "$post_hook" ]]; then
+            echo "  Running post_stow hook for $pkg..."
+            "$post_hook" || echo "  Warning: post_stow for $pkg exited with error"
+        fi
     else
         echo "  [DRY] Would run: stow --dir=$DOTS_DIR --target=$HOME --no-folding $pkg"
+        if [[ -x "$pkg_path/meta/post_stow" ]]; then
+            echo "  [DRY] Would run post_stow hook: $pkg_path/meta/post_stow"
+        fi
     fi
 }
 

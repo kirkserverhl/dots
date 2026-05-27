@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "==> oh-my-zsh post-stow"
+
+# Make sure the oh-my-zsh directory is properly owned and has correct permissions
+if [ -d "$HOME/.oh-my-zsh" ]; then
+    chmod -R u+rwX "$HOME/.oh-my-zsh" 2>/dev/null || true
+fi
+
+# Reminder about custom plugins
+cat <<'MSG'
+
+oh-my-zsh has been stowed.
+
+If you have custom plugins or themes that need initialization,
+you may want to run:
+
+    omz update
+    # or manually reinstall plugins you care about
+
+Your custom plugins live in ~/.oh-my-zsh/custom/
+
+MSG

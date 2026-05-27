@@ -63,3 +63,5 @@ The old `~/.hyprgruv` directory is intentionally left as a historical backup / p
 ## VM Testing
 
 See `docs/VM_TEST.md` (in the repo root) for guidance on testing the full bootstrap + deployment flow in a virtual machine using the official Arch ISO. This is strongly recommended.
+
+**Note:** `migrate.sh` is currently the recommended way to deploy configs after bootstrapping (especially while `dotctl` is still maturing). The bootstrap script now directs you toward it by default.

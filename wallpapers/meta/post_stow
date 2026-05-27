@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "==> wallpapers post-stow"
+
+if [ -L "$HOME/Pictures/Wallpapers" ]; then
+    echo "Symlink verified: ~/Pictures/Wallpapers -> $(readlink -f "$HOME/Pictures/Wallpapers")"
+else
+    echo "Warning: ~/Pictures/Wallpapers is not a symlink. Check your stow deployment."
+fi
+
+# Optional: You can add any post-processing here later
+# (e.g. regenerating a wallpaper cache, notifying waypaper, etc.)
+
+echo "Wallpapers package deployed."

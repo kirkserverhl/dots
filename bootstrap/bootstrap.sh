@@ -90,22 +90,22 @@ echo
 log "Bootstrap complete."
 echo
 cat <<'EOF'
-Next steps:
+Next steps (recommended order for testing / new machines):
 
-  # Prefer dotctl when available
-  if [ -x ~/.dots/dotctl/.local/bin/dotctl ]; then
-      ~/.dots/dotctl/.local/bin/dotctl install dotctl
-      dotctl install all
-  else
-      echo "dotctl binary not present — falling back to migrate.sh"
-      ~/.dots/migrate.sh
-  fi
+  1. Run the main migration (this handles most packages + special ones like oh-my-zsh and wallpapers):
+     ~/.dots/migrate.sh
 
-See docs/VM_TEST.md for notes on testing this setup in a virtual machine (highly recommended).
+  2. (Optional) Once dotctl is ready and you prefer it:
+     ~/.dots/dotctl/.local/bin/dotctl install dotctl
+     dotctl install all
 
-Special packages that create symlinks (oh-my-zsh full directory, wallpapers, etc.)
-are included in the default migrate.sh list.
+migrate.sh is currently the more reliable path, especially early on or in VMs.
+
+See docs/VM_TEST.md for realistic expectations when testing in a virtual machine.
+
+Special packages (oh-my-zsh full directory, wallpapers, etc.) are included
+in the default list inside migrate.sh and have post_stow hooks.
 
 Edit packages in the dots repo on your main machine, commit, push.
-Other machines just pull and re-run the ensure steps above.
+Other machines just pull and re-run the bootstrap + migrate.
 EOF

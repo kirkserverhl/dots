@@ -14,3 +14,24 @@ fi
 if command -v gsettings >/dev/null 2>&1; then
     gsettings set org.gnome.desktop.interface icon-theme 'material-actions'
 fi
+
+# --- Generate initial colors with matugen using a default wallpaper ---
+# This ensures new machines get a working color scheme even before the user sets a real wallpaper.
+if command -v matugen >/dev/null 2>&1; then
+    # Try to find the dots directory relative to this script
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+    DEFAULT_WALLPAPER_DIR="$SCRIPT_DIR/theming/default-wallpaper"
+
+    # Pick the first image file in the default-wallpaper directory (if any)
+    DEFAULT_WALL=$(find "$DEFAULT_WALLPAPER_DIR" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) 2>/dev/null | head -n 1)
+
+    if [[ -n "$DEFAULT_WALL" ]]; then
+        echo "Running matugen with default wallpaper: $DEFAULT_WALL"
+        matugen image "$DEFAULT_WALL" || echo "Warning: matugen failed with default wallpaper"
+    else
+        echo "No default wallpaper found in $DEFAULT_WALLPAPER_DIR — skipping initial matugen run."
+        echo "Drop a wallpaper image there for automatic color generation on new machines."
+    fi
+else
+    echo "matugen not found — skipping initial color generation."
+fi

@@ -34,3 +34,23 @@ if ! cmake --build "$local_build_dir" --target hyprnospecialfade -j"$(nproc)" >/
 fi
 
 echo "hyprnospecialfade plugin built successfully: ${local_build_dir}/libhyprnospecialfade.so"
+
+# --- hyprpm plugins (hyprbars, hypridle, hymission, etc.) ---
+echo "Updating and reloading hyprpm plugins..."
+if command -v hyprpm >/dev/null 2>&1; then
+    hyprpm update || true
+
+    # Enable common plugins the user relies on (safe if already enabled)
+    hyprpm enable hyprbars      || true
+    hyprpm enable hypridle      || true
+    hyprpm enable hyprfocus     || true
+    hyprpm enable hyprtrails    || true
+    hyprpm enable hyprwinwrap   || true
+    hyprpm enable hyprscrolling || true
+    hyprpm enable hymission     || true
+
+    hyprpm reload || true
+    echo "hyprpm plugins updated and reloaded (if any were installed)."
+else
+    echo "hyprpm not found — skipping plugin management. Install hyprpm and re-run post_stow if needed."
+fi

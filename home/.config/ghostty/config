@@ -1,7 +1,7 @@
 # Ghostty Configuration
 # Ported from Kitty config + tuned for Ghostty strengths
 #
-# Managed as part of dotfiles in ~/.hyprgruv
+# Managed as part of dotfiles in ~/.dots
 # Symlinked to ~/.config/ghostty/config
 #
 # Reload config: ctrl+shift+,

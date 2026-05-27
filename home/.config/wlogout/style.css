@@ -29,7 +29,7 @@ by Stephan Raabe (2023)
 }
 
 window {
-  background: url("file:///home/kirk/.config/settings/cache/blurred_wallpaper.png");
+  background: url("file://${HOME}/.config/settings/cache/blurred_wallpaper.png");
   background-size: cover;
   font-size: 16pt;
   color: #cdd6f4;

@@ -24,7 +24,6 @@
 _resolve_graffiti_font() {
     local candidates=(
         "$HOME/.fonts/Graffiti.flf"
-        "$HOME/.hyprgruv/home/.fonts/Graffiti.flf"
         "$HOME/.local/share/figlet/Graffiti.flf"
         "$HOME/.local/share/figlet/graffiti.flf"
     )

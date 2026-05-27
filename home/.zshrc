@@ -3,7 +3,7 @@
 # =====================================================
 export EDITOR="nvim"
 export SUDO_EDITOR="$EDITOR"
-export PATH="$HOME/.config/hyprgruv/scripts:$PATH"
+export PATH="$HOME/.config/hypr/scripts:$PATH"  # updated from old .hyprgruv path
 export PATH=Z"HOME/scripts:$PATH"
 export QT_QPA_PLATFORMTHEME=qt6ct
 export TERMINAL=kitty

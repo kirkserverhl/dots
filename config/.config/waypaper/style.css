@@ -1,0 +1,67 @@
+/* Waypaper Stylesheet - Managed by Matugen */
+/* This file is auto-generated. Do not edit manually. */
+
+QWidget {
+    background-color: #191113;
+    color: #efdee1;
+    font-family: "JetBrainsMono Nerd Font Propo", sans-serif;
+    font-size: 11pt;
+}
+
+QPushButton {
+    background-color: #713345;
+    color: #ffd9e0;
+    border: 1px solid #9e8c8f;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+
+QPushButton:hover {
+    background-color: #ffb1c3;
+    color: #551d2e;
+}
+
+QPushButton:pressed {
+    background-color: #713345;
+}
+
+QListWidget {
+    background-color: #261d1f;
+    border: 1px solid #514346;
+    border-radius: 6px;
+}
+
+QListWidget::item:selected {
+    background-color: #ffb1c3;
+    color: #551d2e;
+}
+
+QLabel {
+    color: #efdee1;
+}
+
+QLineEdit {
+    background-color: #312829;
+    color: #efdee1;
+    border: 1px solid #9e8c8f;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+QComboBox {
+    background-color: #261d1f;
+    color: #efdee1;
+    border: 1px solid #9e8c8f;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+QScrollBar:vertical {
+    background: #261d1f;
+    width: 8px;
+}
+
+QScrollBar::handle:vertical {
+    background: #9e8c8f;
+    border-radius: 4px;
+}
